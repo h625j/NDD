@@ -1,26 +1,25 @@
 import RPi.GPIO as GPIO
 import time
+import picamera
+
+cnt = 0
 
 def setup():
+    global camera    
     GPIO.setmode(GPIO.BCM)
-    #GPIO.setup(21, GPIO.OUT)
     GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     
-# def LEDon():
-#     GPIO.output(21, True)
-    
-# def LEDoff():
-#     GPIO.output(21, False)
-
-def LED(channel):
-    print("기울임!")
-    
-# def LED2(channel):
-#     print("안기울임!")
-    
-def loop():
+def tilt():
+    global cnt
+    camera = picamera.PiCamera()
+    camera.resolution = (1200,800)
     if (GPIO.input(20) == True):
         print("기울임!")
+        cnt += 1
+        camera.capture("tilted"+str(cnt)+".jpg")
+        time.sleep(2)
+        camera.close()
+        
     else:
         print("안기울임!")
 
@@ -29,7 +28,7 @@ if __name__=="__main__":
     setup()
     try:
         while True:
-            loop()
+            tilt()
             time.sleep(0.5)
     except KeyboardInterrupt:
         GPIO.cleanup()

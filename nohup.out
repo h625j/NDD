@@ -17,3 +17,15 @@
 [I 14:10:51.847 NotebookApp] The Jupyter Notebook is running at:
 [I 14:10:51.848 NotebookApp] http://raspberrypi:8889/
 [I 14:10:51.848 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[I 16:45:29.968 NotebookApp] Serving notebooks from local directory: /root/NDD
+[I 16:45:29.972 NotebookApp] The Jupyter Notebook is running at:
+[I 16:45:29.973 NotebookApp] http://raspberrypi:8888/
+[I 16:45:29.973 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[W 16:45:36.174 NotebookApp] 404 GET /edit/NDD/Pos.py (203.252.166.243): File does not exist: NDD/Pos.py
+[W 16:45:36.403 NotebookApp] 404 GET /edit/NDD/Pos.py (203.252.166.243) 236.93ms referer=None
+[W 16:45:37.469 NotebookApp] 404 GET /edit/NDD/Pos.py (203.252.166.243): File does not exist: NDD/Pos.py
+[W 16:45:37.477 NotebookApp] 404 GET /edit/NDD/Pos.py (203.252.166.243) 11.78ms referer=None
+[W 16:45:42.842 NotebookApp] 404 GET /NDD (203.252.166.243) 11.04ms referer=None
+[I 16:45:47.538 NotebookApp] 302 GET / (203.252.166.243) 3.29ms
+[I 16:45:54.430 NotebookApp] Saving file at /Pos.py
+[I 16:46:02.733 NotebookApp] Saving file at /Pos.py
