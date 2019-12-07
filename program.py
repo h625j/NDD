@@ -6,7 +6,7 @@ import threading
 
 cnt = 0
 instance = dht11.DHT11(pin=21)
-
+flag2=False
 class TiltThread(threading.Thread):
     def __init__(self,threadID,name):
         threading.Thread.__init__(self)
@@ -29,7 +29,7 @@ def setup():
     
 def sit(threadName):
     print("Starting",threadName)
-
+    global flag2
     global instance
     result = instance.read()
     temp_pre=0
@@ -43,21 +43,27 @@ def sit(threadName):
             temp_post = result.humidity
             if temp_post-temp_pre>1:
                 print("sitting")
+                flag2=True
                 flag=False
                 
     
 def tilt(threadName):
     global cnt
+    global flag2
     print("Starting",threadName)
 
     while True:
-        if (GPIO.input(20) == True):
+        
+        if (GPIO.input(20) == True and flag2==True):
             print("기울임!")
             cnt += 1
-            camera(cnt)
-
-        else:
-            print("안기울임!")
+            if cnt%20==0:
+                
+                camera(cnt)
+                print("찍음")
+        time.sleep(0.5)
+        #els#e:
+            #print("안기울임!")
 
 if __name__=="__main__":
     GPIO.setwarnings(False)
