@@ -2,11 +2,33 @@ import RPi.GPIO as GPIO
 import time
 import dht11
 from camera import *
+from tripleLED import *
 import threading
 
 cnt = 0
 instance = dht11.DHT11(pin=21)
 flag2=False
+tilt1 = 20
+tilt2 = 16
+
+app= Flask(__name__)
+
+@app.after_request
+def add_header (response):
+    """
+    Add
+    headers to both force latest IE rendering engine or Chrome Frame
+    and
+    also to cache the rendered page for 10 minutes
+    """
+    response.headers['X UA Compatible']='IE=Edge,chrome=1'
+    response.headers['Cache Control'] = 'public , max-age =0'
+    return response
+
+@app.route("/")
+def hello():
+    return render_template("main.html")
+
 class TiltThread(threading.Thread):
     def __init__(self,threadID,name):
         threading.Thread.__init__(self)
@@ -25,7 +47,9 @@ class SitThread(threading.Thread):
     
 def setup():
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(20, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(tilt1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(tilt2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    
     
 def sit(threadName):
     print("Starting",threadName)
@@ -53,22 +77,19 @@ def tilt(threadName):
     print("Starting",threadName)
 
     while True:
-        
         if (GPIO.input(20) == True and flag2==True):
-            print("기울임!")
             cnt += 1
             if cnt%20==0:
-                
+                print("기울임!")
                 camera(cnt)
-                print("찍음")
+                ledctl(1)
         time.sleep(0.5)
-        #els#e:
-            #print("안기울임!")
 
 if __name__=="__main__":
     GPIO.setwarnings(False)
     setup()
-    try:
+    app.run(host='0.0.0.0', port=80, debug=True)
+    try: 
         thread1 = TiltThread(1, "tilt")
         thread2 = SitThread(2, "sit")
         thread1.start()

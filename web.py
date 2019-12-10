@@ -17,8 +17,8 @@ def add_header (response):
     return response
 
 @app.route("/")
-def hello():
-    image = "ex20.jpg"
+def hello(img):
+    
     return render_template("main.html")
     
 if __name__=="__main__":
