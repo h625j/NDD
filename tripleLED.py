@@ -23,8 +23,13 @@ def ledctl(num):
         GPIO.output(rPin, False)
         GPIO.output(gPin, False)
     #초록
-    else:
+    elif num==3:
         GPIO.output(gPin, True)
+        GPIO.output(rPin, False)
+        GPIO.output(yPin, False)
+        
+    elif num==4:
+        GPIO.output(gPin, False)
         GPIO.output(rPin, False)
         GPIO.output(yPin, False)
     

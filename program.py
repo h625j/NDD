@@ -30,36 +30,69 @@ def add_header(response):
 def hello():
     return render_template("main.html")
 
-class TiltThread(threading.Thread):
-    def __init__(self,threadID,name):
-        threading.Thread.__init__(self)
-        self.threadID=threadID
-        self.name=name
-    def run(self):
-        tilt(self.name)
+class AsyncTask:
+    def __init__(self):
+        pass
+    
+    def task1(self):
+        app.run(host='0.0.0.0', port=80, debug=True)
+        threading.Timer(1,self.task1).start()
+        
+    def task2(self):
+        sit()
+        threading.Timer(1,self.task2).start()
+        
+    def task3(self):
+        tilt()
+        threading.Timer(1,self.task3).start()
+        
+def main():
+    at = AsyncTask()
+    at.task1()
+    at.task2()
+    at.task3()
+        
 
-class SitThread(threading.Thread):
-    def __init__(self,threadID,name):
-        threading.Thread.__init__(self)
-        self.threadID=threadID
-        self.name=name
-    def run(self):
-        sit(self.name)        
+# class WebThread(threading.Thread):
+#     def __init__(self,threadID,name):
+#         threading.Thread.__init__(self)
+#         self.threadID=threadID
+#         self.name=name
+#     def run(self):
+#         webrun(self.name)
+        
+# def webrun(threadName):
+#     app.run(host='0.0.0.0', port=80, debug=True)
+
+# class TiltThread(threading.Thread):
+#     def __init__(self,threadID,name):
+#         threading.Thread.__init__(self)
+#         self.threadID=threadID
+#         self.name=name
+#     def run(self):
+#         tilt(self.name)
+
+# class SitThread(threading.Thread):
+#     def __init__(self,threadID,name):
+#         threading.Thread.__init__(self)
+#         self.threadID=threadID
+#         self.name=name
+#     def run(self):
+#         sit(self.name)        
     
 def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(tilt1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(tilt2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     
-def sit(threadName):
-    print("Starting",threadName)
+def sit():
     global flag2
     global instance
     result = instance.read()
     temp_pre=0
     if result.is_valid():
         temp_pre = result.humidity
-    print("처음 습도 : "+str(temp_pre))
+    #print("처음 습도 : "+str(temp_pre))
     flag=True
     while flag:
         result = instance.read()
@@ -70,31 +103,33 @@ def sit(threadName):
                 flag2=True
                 flag=False                
     
-def tilt(threadName):
+def tilt():
     global cnt
     global flag2
-    print("Starting",threadName)
 
-    while True:
-        if (GPIO.input(20) == True and flag2==True):
-            cnt += 1
-            if cnt%20==0:
-                print("기울임!")
-                camera()
-                ledctl(1)        
-        time.sleep(0.5)
-
+    #while True:
+    if (GPIO.input(tilt1) == True and flag2 == True and GPIO.input(tilt2) == True):
+        print("둘다")
+        cnt += 1
+        if cnt%10==0:
+            print("기울임!")
+            camera()
+            ledctl(1)
+    elif (GPIO.input(tilt1) == True and flag2 == True and GPIO.input(tilt2) == False):
+        print("tilt1만")
+        ledctl(2)
+    elif (GPIO.input(tilt1) == False and flag2 == True and GPIO.input(tilt2) == False):
+        print("둘다아님")
+        ledctl(3)
+    else:
+        ledctl(4)
+    time.sleep(0.5)
+            
 if __name__=="__main__":
     GPIO.setwarnings(False)
     setup()
-    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
     try: 
-        thread1 = TiltThread(1, "tilt")
-        thread2 = SitThread(2, "sit")
-        thread1.start()
-        thread2.start()
-#         thread1.join()
-#         thread2.join()   
+        main()  
     except KeyboardInterrupt:
         GPIO.cleanup()
     
