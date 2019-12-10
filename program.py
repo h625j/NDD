@@ -35,7 +35,7 @@ def hello():
     global starttime
     now = time.time()
     timeString = time.strftime("%H:%M:%S", time.gmtime(now-starttime))
-    templateDate = {'title':'I Hate Turtle!', 'time':timeString}
+    templateData = {'title':'I Hate Turtle!', 'time':timeString}
     return render_template("main.html", **templateData)
 
 class AsyncTask:
