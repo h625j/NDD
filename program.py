@@ -44,14 +44,14 @@ class AsyncTask:
         
     def task2(self):        
         sit()
-        threading.Timer(2,self.task2).start()
+        threading.Timer(3,self.task2).start()
         
     def task3(self):
         tilt()
         threading.Timer(1,self.task3).start()
     def task4(self):
         dist()
-        threading.Timer(1,self.task4).start()
+        threading.Timer(2,self.task4).start()
         
 def main():
     at = AsyncTask()
@@ -71,13 +71,13 @@ def sit():
     result = instance.read()
     temp_pre=0
     if result.is_valid():
-        temp_pre = result.temperature
+        temp_pre = result.humidity
     #print("처음 습도 : "+str(temp_pre))
     flag=True
     while flag:
         result = instance.read()
         if result.is_valid():
-            temp_post = result.temperature
+            temp_post = result.humidity
             if temp_post-temp_pre>1:
                 print("sitting")
                 flag2=True
@@ -125,7 +125,6 @@ def tilt():
     #time.sleep(0.5)
     
 def calc(t1, t2, dis):
-   
     if (t1 ==False and t2 == False):
         return 3
     elif ((t1 == True and t2 ==False and dis<20) or(t1 == True and t2 == True and dis<20)):
@@ -139,6 +138,7 @@ def calc(t1, t2, dis):
 if __name__=="__main__":
     GPIO.setwarnings(False)
     setup()
+    ledctl(4)
     try:
         sit()
         main()  
