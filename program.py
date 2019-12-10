@@ -5,7 +5,7 @@ from camera import *
 from tripleLED import *
 import threading
 from flask import Flask, render_template
-from distance import *
+from supersonic import *
 
 cnt = 0
 instance = dht11.DHT11(pin=21)
@@ -13,7 +13,7 @@ dflag=False
 flag2=False
 tilt1 = 20
 tilt2 = 16
-dist = 0
+dis = 0
 
 app= Flask(__name__)
 
@@ -58,35 +58,7 @@ def main():
     at.task2()
     at.task3()
     at.task4()
-    at.task1()
-        
-
-# class WebThread(threading.Thread):
-#     def __init__(self,threadID,name):
-#         threading.Thread.__init__(self)
-#         self.threadID=threadID
-#         self.name=name
-#     def run(self):
-#         webrun(self.name)
-        
-# def webrun(threadName):
-#     app.run(host='0.0.0.0', port=80, debug=True)
-
-# class TiltThread(threading.Thread):
-#     def __init__(self,threadID,name):
-#         threading.Thread.__init__(self)
-#         self.threadID=threadID
-#         self.name=name
-#     def run(self):
-#         tilt(self.name)
-
-# class SitThread(threading.Thread):
-#     def __init__(self,threadID,name):
-#         threading.Thread.__init__(self)
-#         self.threadID=threadID
-#         self.name=name
-#     def run(self):
-#         sit(self.name)        
+    at.task1()   
     
 def setup():
     GPIO.setmode(GPIO.BCM)
@@ -111,31 +83,58 @@ def sit():
                 flag2=True
                 flag=False                
 def dist():
-    global dist
-    dist = distance()
-    if (dist > 2000):
+    global dis
+    dis = distance()
+    if (dis > 2000):
         return
                 
 def tilt():
     global cnt
     global flag2
+    global dis
+    t1 = GPIO.input(tilt1)
+    t2 = GPIO.input(tilt2)
+    chk=calc(t1, t2, dis)
 
-    #while True:
-    if (GPIO.input(tilt1) == True and flag2 == True and GPIO.input(tilt2) == True and dist>20):
-        ledctl(1)
-        cnt += 1
-        if cnt%10==0:
-            print("빨간불")
-            camera()            
-    elif (GPIO.input(tilt1) == True and flag2 == True and GPIO.input(tilt2) == False and dist >10 and dist < 20):
-        print("tilt1만")
-        ledctl(2)
-    elif (GPIO.input(tilt1) == False and flag2 == True and GPIO.input(tilt2) == False and dist <10):
-        print("둘다아님")
-        ledctl(3)
-    else:
-        ledctl(4)
+#     #while True:
+#     if (t1 == True and flag2 == True and t2 == True and dis>20):
+#         ledctl(1)
+#         cnt += 1
+#         if cnt%10==0:
+#             print("빨간불")
+#             camera()            
+#     elif (t1 == True and flag2 == True and t2 == False and dis >10 and dis < 20):
+#         print("tilt1만")
+#         ledctl(2)
+#     elif (t1 == False and flag2 == True and t2 == False and dis <10):
+#         print("둘다아님")
+#         ledctl(3)
+#     else:
+#         ledctl(4)
+    
+    if flag2==True:
+        if chk==1:
+            ledctl(1)
+            cnt += 1
+            if cnt%10==0:
+                print("빨간불")
+                camera() 
+        else:
+            ledctl(chk)
+   
     #time.sleep(0.5)
+    
+def calc(t1, t2, dis):
+   
+    if (t1 ==False and t2 == False):
+        return 3
+    elif ((t1 == True and t2 ==False and dis<20) or(t1 == True and t2 == True and dis<20)):
+        return 2
+    elif (t1 == True and t2 == False and dis>20) or (t1 == True and t2 == True and dis>20):
+        return 1
+    else:
+        return 4
+    
             
 if __name__=="__main__":
     GPIO.setwarnings(False)
