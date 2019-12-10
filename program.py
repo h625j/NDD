@@ -14,6 +14,7 @@ flag2=False
 tilt1 = 20
 tilt2 = 16
 dis = 0
+starttime = 0
 
 app= Flask(__name__)
 
@@ -31,7 +32,11 @@ def add_header(response):
 
 @app.route("/")
 def hello():
-    return render_template("main.html")
+    global starttime
+    now = time.time()
+    timeString = time.strftime("%H:%M:%S", time.gmtime(now-starttime))
+    templateDate = {'title':'I Hate Turtle!', 'time':timeString}
+    return render_template("main.html", **templateData)
 
 class AsyncTask:
     def __init__(self):
@@ -40,12 +45,11 @@ class AsyncTask:
     def task1(self):
         print("서버")
         app.run(host='0.0.0.0', port=80, debug=True)
-        threading.Timer(1,self.task1).start()
+        threading.Timer(0.5,self.task1).start()
         
     def task2(self):        
         sit()
         threading.Timer(3,self.task2).start()
-        
     def task3(self):
         tilt()
         threading.Timer(1,self.task3).start()
@@ -55,10 +59,12 @@ class AsyncTask:
         
 def main():
     at = AsyncTask()
+    
     at.task2()
     at.task3()
     at.task4()
-    at.task1()   
+    at.task1()
+    
     
 def setup():
     GPIO.setmode(GPIO.BCM)
@@ -95,22 +101,6 @@ def tilt():
     t1 = GPIO.input(tilt1)
     t2 = GPIO.input(tilt2)
     chk=calc(t1, t2, dis)
-
-#     #while True:
-#     if (t1 == True and flag2 == True and t2 == True and dis>20):
-#         ledctl(1)
-#         cnt += 1
-#         if cnt%10==0:
-#             print("빨간불")
-#             camera()            
-#     elif (t1 == True and flag2 == True and t2 == False and dis >10 and dis < 20):
-#         print("tilt1만")
-#         ledctl(2)
-#     elif (t1 == False and flag2 == True and t2 == False and dis <10):
-#         print("둘다아님")
-#         ledctl(3)
-#     else:
-#         ledctl(4)
     
     if flag2==True:
         if chk==1:
@@ -139,6 +129,7 @@ if __name__=="__main__":
     GPIO.setwarnings(False)
     setup()
     ledctl(4)
+    starttime = time.time()
     try:
         sit()
         main()  

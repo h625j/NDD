@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-	<title>Title</title>
+	<title>{{ title }}</title>
 </head>
 <body>
-	<h>당신의 자세는...</h>
+	<h1>당신의 자세는...</h1>
 	<p>
 	<img src={{ url_for("static",filename="img.jpg")}}>
 	</p>
-	<h>당신의 공부시간은...</h>
+	<h2>당신의 공부시간은... {{ time }}</h2>
 </body>
 </html>
 
