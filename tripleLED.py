@@ -1,9 +1,11 @@
 import RPi.GPIO as GPIO
 
-rPin=14
+rPin=13
 yPin=18
 gPin=15
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
 GPIO.setup(rPin, GPIO.OUT)
 GPIO.setup(yPin, GPIO.OUT)
 GPIO.setup(gPin, GPIO.OUT)
@@ -14,6 +16,7 @@ def ledctl(num):
         GPIO.output(rPin, True)
         GPIO.output(yPin, False)
         GPIO.output(gPin, False)
+        
     #노랑
     elif num==2:
         GPIO.output(yPin, True)

@@ -4,6 +4,7 @@ import dht11
 from camera import *
 from tripleLED import *
 import threading
+from flask import Flask, render_template
 
 cnt = 0
 instance = dht11.DHT11(pin=21)
@@ -14,7 +15,7 @@ tilt2 = 16
 app= Flask(__name__)
 
 @app.after_request
-def add_header (response):
+def add_header(response):
     """
     Add
     headers to both force latest IE rendering engine or Chrome Frame
@@ -50,7 +51,6 @@ def setup():
     GPIO.setup(tilt1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(tilt2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     
-    
 def sit(threadName):
     print("Starting",threadName)
     global flag2
@@ -68,8 +68,7 @@ def sit(threadName):
             if temp_post-temp_pre>1:
                 print("sitting")
                 flag2=True
-                flag=False
-                
+                flag=False                
     
 def tilt(threadName):
     global cnt
@@ -81,21 +80,21 @@ def tilt(threadName):
             cnt += 1
             if cnt%20==0:
                 print("기울임!")
-                camera(cnt)
-                ledctl(1)
+                camera()
+                ledctl(1)        
         time.sleep(0.5)
 
 if __name__=="__main__":
     GPIO.setwarnings(False)
     setup()
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
     try: 
         thread1 = TiltThread(1, "tilt")
         thread2 = SitThread(2, "sit")
         thread1.start()
         thread2.start()
-        thread1.join()
-        thread2.join()
+#         thread1.join()
+#         thread2.join()   
     except KeyboardInterrupt:
         GPIO.cleanup()
     

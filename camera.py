@@ -4,7 +4,7 @@ import web
 
 
 
-def camera(cnt):
+def camera():
     camera = picamera.PiCamera()
     camera.resolution = (800,600)
     camera.capture("static/"+"img.jpg")
