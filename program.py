@@ -71,13 +71,13 @@ def sit():
     result = instance.read()
     temp_pre=0
     if result.is_valid():
-        temp_pre = result.humidity
+        temp_pre = result.temperature
     #print("처음 습도 : "+str(temp_pre))
     flag=True
     while flag:
         result = instance.read()
         if result.is_valid():
-            temp_post = result.humidity
+            temp_post = result.temperature
             if temp_post-temp_pre>1:
                 print("sitting")
                 flag2=True
