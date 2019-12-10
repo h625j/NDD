@@ -35,12 +35,13 @@ class AsyncTask:
         pass
     
     def task1(self):
+        print("서버")
         app.run(host='0.0.0.0', port=80, debug=True)
         threading.Timer(1,self.task1).start()
         
-    def task2(self):
+    def task2(self):        
         sit()
-        threading.Timer(1,self.task2).start()
+        threading.Timer(2,self.task2).start()
         
     def task3(self):
         tilt()
@@ -48,9 +49,9 @@ class AsyncTask:
         
 def main():
     at = AsyncTask()
-    at.task1()
     at.task2()
     at.task3()
+    at.task1()
         
 
 # class WebThread(threading.Thread):
@@ -86,6 +87,7 @@ def setup():
     GPIO.setup(tilt2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     
 def sit():
+    print("앉아")
     global flag2
     global instance
     result = instance.read()
@@ -123,12 +125,13 @@ def tilt():
         ledctl(3)
     else:
         ledctl(4)
-    time.sleep(0.5)
+    #time.sleep(0.5)
             
 if __name__=="__main__":
     GPIO.setwarnings(False)
     setup()
-    try: 
+    try:
+        sit()
         main()  
     except KeyboardInterrupt:
         GPIO.cleanup()
