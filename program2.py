@@ -8,13 +8,11 @@ from flask import Flask, render_template
 from supersonic import *
 
 cnt = 0
-dis=0
-starttime=0
 dflag=False
 flag2=False
 tilt1 = 20
 tilt2 = 16
-instance = dht11.DHT11(pin=21)
+dis=0
 
 app= Flask(__name__)
 
@@ -67,9 +65,11 @@ def main():
     
     
 def setup():
+    global instance
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(tilt1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(tilt2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    instance = dht11.DHT11(pin=21)
 
     
 def sit():
@@ -80,15 +80,15 @@ def sit():
     if result.is_valid():
         temp_pre = result.humidity
     #print("처음 습도 : "+str(temp_pre))
-    flag=True
-    while flag:
+    
+    while True:
         result = instance.read()
         if result.is_valid():
             temp_post = result.humidity
             if temp_post-temp_pre>1:
                 print("sitting")
                 flag2=True
-                flag=False                
+                break                
 def dist():
     global dis
     dis = distance()
@@ -118,9 +118,9 @@ def tilt():
 def calc(t1, t2, dis):
     if (t1 ==False and t2 == False):
         return 3
-    elif ((t1 == True and t2 ==False and dis<20) or(t1 == True and t2 == True and dis<20)):
+    elif (t1 == True and dis<20):
         return 2
-    elif (t1 == True and t2 == False and dis>20) or (t1 == True and t2 == True and dis>20):
+    elif (t1 == True and dis>20):
         return 1
     else:
         return 4
@@ -132,7 +132,7 @@ if __name__=="__main__":
     ledctl(4)
     starttime = time.time()
     try:
-        sit()
+        #sit() 왜 굳이 씻을 또 할까????????? 
         main()  
     except KeyboardInterrupt:
         GPIO.cleanup()
