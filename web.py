@@ -12,13 +12,13 @@ def add_header (response):
     and
     also to cache the rendered page for 10 minutes
     """
-    response.headers['X UA Compatible']='IE=Edge,chrome=1'
-    response.headers['Cache Control'] = 'public , max-age =0'
+    response.headers['X-UA-Compatible']= 'IE=Edge,chrome=1'
+    response.headers['Cache-Control'] = 'public, max-age=0'
     return response
 
 @app.route("/")
-def hello(img):
-    
+def hello():
+    image
     return render_template("main.html")
     
 if __name__=="__main__":
