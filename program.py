@@ -5,12 +5,15 @@ from camera import *
 from tripleLED import *
 import threading
 from flask import Flask, render_template
+from distance import *
 
 cnt = 0
 instance = dht11.DHT11(pin=21)
+dflag=False
 flag2=False
 tilt1 = 20
 tilt2 = 16
+dist = 0
 
 app= Flask(__name__)
 
@@ -46,11 +49,15 @@ class AsyncTask:
     def task3(self):
         tilt()
         threading.Timer(1,self.task3).start()
+    def task4(self):
+        dist()
+        threading.Timer(1,self.task4).start()
         
 def main():
     at = AsyncTask()
     at.task2()
     at.task3()
+    at.task4()
     at.task1()
         
 
@@ -87,7 +94,6 @@ def setup():
     GPIO.setup(tilt2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     
 def sit():
-    print("앉아")
     global flag2
     global instance
     result = instance.read()
@@ -104,23 +110,27 @@ def sit():
                 print("sitting")
                 flag2=True
                 flag=False                
-    
+def dist():
+    global dist
+    dist = distance()
+    if (dist > 2000):
+        return
+                
 def tilt():
     global cnt
     global flag2
 
     #while True:
-    if (GPIO.input(tilt1) == True and flag2 == True and GPIO.input(tilt2) == True):
-        print("둘다")
+    if (GPIO.input(tilt1) == True and flag2 == True and GPIO.input(tilt2) == True and dist>20):
+        ledctl(1)
         cnt += 1
         if cnt%10==0:
-            print("기울임!")
-            camera()
-            ledctl(1)
-    elif (GPIO.input(tilt1) == True and flag2 == True and GPIO.input(tilt2) == False):
+            print("빨간불")
+            camera()            
+    elif (GPIO.input(tilt1) == True and flag2 == True and GPIO.input(tilt2) == False and dist >10 and dist < 20):
         print("tilt1만")
         ledctl(2)
-    elif (GPIO.input(tilt1) == False and flag2 == True and GPIO.input(tilt2) == False):
+    elif (GPIO.input(tilt1) == False and flag2 == True and GPIO.input(tilt2) == False and dist <10):
         print("둘다아님")
         ledctl(3)
     else:
