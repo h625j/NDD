@@ -1,14 +1,36 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-	<title>{{ title }}</title>
+	<style>
+		body {
+			background-color: #b3c90c;
+		}
+		header {
+			margin-top: 20px;
+			margin-bottom: 30px;
+		}
+		section {
+			padding-top: 50px;
+			padding-bottom: 100px;
+			display:block;
+			background-color: #ffffff;
+			width : 960px;
+			border-radius: 90px 90px 0px 0px;
+		}
+	</style>
+	<center><title>{{ title }}</title></center>
 </head>
 <body>
-	<h1>당신의 자세는...</h1>
-	<p>
-	<img src={{ url_for("static",filename="img.jpg")}}>
-	</p>
-	<h2>당신이 책상에 앉은지... {{ time }}</h2>
+	<center><header>
+		<img src = "plogo.png" width="720">
+		<br>
+	</header></center>
+	<center><section>
+		<img src = "pimg1.png" width="720">
+		<img src="img.jpg" width="720">
+		<img src = "pimg2.png" width="720">
+		<br>{{ time }}
+	</section></center>
+	<footer></footer>
 </body>
 </html>
-
